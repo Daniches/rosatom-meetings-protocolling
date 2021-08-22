@@ -1,0 +1,6 @@
+vosk
+spacy
+nltk
+docxtpl
+wave
+datetime
