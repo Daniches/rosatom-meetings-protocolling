@@ -3,6 +3,7 @@ from spacy.lang.ru import Russian
 from spacy.matcher import PhraseMatcher
 from nltk.stem.snowball import SnowballStemmer 
 from docxtpl import DocxTemplate
+from words2numbers.extractor import NumberExtractor
 import sys
 import os
 import wave
@@ -15,6 +16,7 @@ import settings
 SetLogLevel(0)
 model = Model("model")
 rec = KaldiRecognizer(model, settings.sample_rate)
+numExtractor = NumberExtractor()
 
 def process(file_name, file_name_out):
     
@@ -73,7 +75,8 @@ def process(file_name, file_name_out):
         else:
             text_end = block_parts[i+1]['start']
         block_parts[i]['text'] = ' '.join(result_split[text_start:text_end])
-        
+        block_parts[i]['text'] = numExtractor.replace_groups(block_parts[i]['text'])
+    
     block_number = 1
     blocks = []
     block = []
@@ -97,6 +100,8 @@ def process(file_name, file_name_out):
             compiled_text += f'{block_part["name"]}: {block_part["text"]}\n'
         compiled_text += '\n'
         block_number += 1
+        
+    
         
     doc = DocxTemplate(settings.template_file)
     context = { 'blocks' : compiled_text, 'date': f'{datetime.datetime.now():%d.%m.%Y}'}

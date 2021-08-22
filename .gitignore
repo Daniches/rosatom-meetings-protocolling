@@ -3,3 +3,4 @@
 *.mp4
 _pycache_/
 model/
+words2numbers/_pycache_
